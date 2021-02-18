@@ -4,7 +4,7 @@ class Game
   attr_reader :lives, :word
   attr_accessor :guesses
 
-  def initialize(lives = 7, guesses=[], word=pick_random_word)
+  def initialize(lives = 7, guesses = [], word = pick_random_word)
     @lives = lives
     @guesses = guesses
     @word = word
@@ -37,7 +37,7 @@ class Game
     end
     correct_indices.uniq
   end
-  
+
   def won?
     find_correct_indices.length == @word.length
   end
@@ -92,15 +92,16 @@ until game.lives.zero?
   end
   game.guess!(guess)
   game.incorrect_guess! unless game.guess_correct?(guess)
-  system "clear"; system "cls"
-  if game.won?
-    game.print_word
-    puts 'You win!'
-    break
-  end
+  system 'clear'
+  system 'cls'
+  next unless game.won?
+
+  game.print_word
+  puts 'You win!'
+  break
 end
-unless game.won? or saved_game
+unless game.won? || saved_game
   puts 'You ran out of guesses.'
   print 'The word was: '
-  game.print_word
+  puts "#{game.word}."
 end
