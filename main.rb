@@ -4,9 +4,10 @@ class Game
   attr_reader :lives, :word
   attr_accessor :guesses
 
-  def initialize(guesses = [], lives = 7)
-    @guesses = guesses
+  def initialize(lives = 7, guesses=[], word=pick_random_word)
     @lives = lives
+    @guesses = guesses
+    @word = word
   end
 
   def pick_random_word
@@ -54,6 +55,7 @@ class Game
   end
 end
 choice = 'TBD'
+save_file = 'save'
 until ['n', 'l', ''].include?(choice.downcase)
   puts 'Play a [n]ew game or [l]oad the save? (Nl)'
   choice = gets.chomp
@@ -64,9 +66,9 @@ when 'n', ''
   game = Game.new
   game.pick_random_word
 when 'l'
-  game = Game.new # TODO: load file.
+  (lives, guesses, word) = Marshal.load(File.binread(save_file))
+  game = Game.new(lives, guesses, word)
 end
-puts game.word # TODO: delete, useful only for testing.
 lives_counter = 'HANGMAN'
 saved_game = false
 until game.lives.zero?
@@ -78,7 +80,9 @@ until game.lives.zero?
   guess = gets.chomp[0]
   if guess.nil?
     saved_game = true
-    # TODO: save game.
+    File.open(save_file, 'w+') do |f|
+      f.write(Marshal.dump([game.lives, game.guesses, game.word]))
+    end
     break
   end
   guess = guess.downcase
